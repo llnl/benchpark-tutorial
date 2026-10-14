@@ -1,0 +1,104 @@
+# Uncomment if you need to debug your deployment of Jupyter.
+# For more information on debugging, see:
+# https://z2jh.jupyter.org/en/stable/administrator/debug.html
+# debug:
+#   enabled: true
+
+hub:
+  # Maximum number of users with spawned JupyterLab environments (i.e., pods) at a time
+  concurrentSpawnLimit: 14
+  config:
+    # Define a password for login
+    DummyAuthenticator:
+      password: hpctutorial26
+    JupyterHub:
+      admin_access: true
+      authenticator_class: dummy
+
+  # Define storage quantity for JupyterHub's persistent database
+  # We could explicitly set storage class name here,
+  # but we won't because we've marked the storage class defined
+  # in storage-class.yaml as default
+  db:
+    pvc:
+      storage: 32Gi
+      storageClassName: gp3
+
+  # Specify the hub image for the tutorial.
+  # The hub image should be based off of the jupyterhub/k8s-hub image.
+  # Its job is twofold:
+  #   1) If desired, replace the login page (at /usr/local/share/jupyterhub/templates/login.html) with a custom HTML login page
+  #   2) Set the user
+  image:
+    name: jupyterhub/k8s-hub
+    tag: "4.2.0"
+    pullPolicy: Always
+
+  # Define resource usage for JupyterHub
+  # For large tutorials, it is recommended to set these higher
+  # We are just using defualt resource usage
+
+  # Define custom hostname for JupyterHub
+  # We are not using a custom hostname
+  
+ingress:
+  enabled: true
+  ingressClassName: "nginx"
+
+# Based on optimization recommendations from:
+# https://z2jh.jupyter.org/en/latest/administrator/optimization.html#scaling-up-in-time-user-placeholders
+# scheduling:
+#   podPriority:
+#     enabled: true
+#   userPlaceholder:
+#     replicas: 3
+
+# Define the spawner and init containers for each attendee's pod
+singleuser:
+  # Specify the spawner image for the tutorial.
+  # The spawner image should do the following:
+  #   1) Install any necessary software
+  #   2) Define the user for the tutorial (we usually default to jovyan)
+  #   3) If custom Python packages are needed, it's often recommended to install a custom Jupyter kernel with `IPython kernel install`
+  #   4) If you want a custom Jupyter launcher UI, install the appropriate packages and update JUPYTER_APP_LAUNCHER_PATH
+  #   5) Copy any necessary local scripts or files and ensure proper permissions
+  image:
+    name: ghcr.io/llnl/reproducible-benchmarking-spawn
+    # Build and push this dry-run-specific tag from ../../docker/Dockerfile
+    # before deploying. This avoids launching the existing hpcic-2026 image.
+    tag: "pact-2026-dry-run"
+    pullPolicy: Always
+  # Specify the minimum (i.e., guarantee) and maximum (i.e., limit) amount of resources per user
+  cpu:
+    limit: 32
+    guarantee: 32
+  memory:
+    limit: "64G"
+    guarantee: "64G"
+  # If needed, specify a custom entrypoint into the spawner image.
+  # For more information, look at the documentation for Docker ENTRYPOINT and CMD directives:
+  # https://www.docker.com/blog/docker-best-practices-choosing-between-run-cmd-and-entrypoint/
+  cmd:
+    - bash
+    - -lc
+    - |
+      last_core_id=$((32 - 1))
+      mkdir -p "${HOME}/.flux"
+      cat > "${HOME}/.flux/resource.toml" <<EOF
+      [resource]
+      noverify = true
+
+      [[resource.config]]
+      hosts = "$(hostname)"
+      cores = "0-${last_core_id}"
+      EOF
+      exec flux start -c "${HOME}/.flux/resource.toml" jupyterhub-singleuser
+  storage:
+    type: none
+    extraVolumes:
+      - name: shm-volume
+        emptyDir:
+          medium: Memory
+    extraVolumeMounts:
+      - name: shm-volume
+        mountPath: /dev/shm

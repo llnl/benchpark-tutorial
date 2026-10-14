@@ -1,0 +1,53 @@
+# Copyright 2025 Lawrence Livermore National Security, LLC and other
+# Benchpark developers. See the top-level COPYRIGHT file for details.
+#
+# SPDX-License-Identifier: Apache-2.0
+
+# For testing
+# FROM test-benchpark
+
+FROM ghcr.io/llnl/benchpark/benchpark-flux-el10:latest
+
+USER root
+
+RUN dnf install -y --setopt=install_weak_deps=False \
+    ca-certificates \
+    bind-utils \
+    iputils \
+    tini && \
+    dnf clean all && \
+    rm -rf /var/cache/dnf
+
+SHELL [ "/bin/bash", "-c" ]
+
+#RUN . /opt/global_py_venv/bin/activate && \
+#    /opt/global_py_venv/bin/python3 -m pip install plotly[express] && \
+#    /opt/global_py_venv/bin/python3 -m pip install -U ipykernel && \
+#    /opt/global_py_venv/bin/python3 -m ipykernel install --prefix=/usr/local --name 'benchpark-tutorial-kernel'
+
+# if needed, update this to dnf archive
+#COPY ./docker/kitware-archive.sh /tmp
+#
+#RUN /tmp/kitware-archive.sh && \
+#    apt install -y cmake && \
+#    which cmake && \
+#    cmake --version && \
+#    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /home/fluxuser/benchpark
+
+COPY ./docker/spawn-entrypoint.sh /entrypoint.sh
+COPY ./docker/spawn-local-entrypoint.sh /local-entrypoint.sh
+RUN chmod 777 /entrypoint.sh
+RUN chmod 777 /local-entrypoint.sh
+
+RUN rm -f /home/fluxuser/.jupyter/jupyter_lab_config.py
+
+USER fluxuser
+ENV SHELL=/usr/bin/bash
+ENV FLUX_URI_RESOLVE_LOCAL=t
+
+EXPOSE 8888
+ENTRYPOINT [ "tini", "--" ]
+
+CMD ["flux", "start", "jupyter", "lab"]

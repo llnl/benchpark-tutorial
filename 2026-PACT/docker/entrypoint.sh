@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# Source benchpark environment
+source /home/fluxuser/benchpark/setup-env.sh
+
+# Start flux with bash
+exec /usr/bin/flux start /bin/bash
+
+chown -R 1000 /home/fluxuser
