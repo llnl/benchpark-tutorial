@@ -14,7 +14,7 @@ helm repo add jupyterhub https://hub.jupyter.org/helm-chart/
 helm repo update
 echo ""
 echo "Installing the Helm chart and deploying JupyterHub to EKS:"
-helm install pact-2026-dry-run-jupyter jupyterhub/jupyterhub --version 4.2.0 --values ./helm-config.yaml
+helm install pact-2026-dry-run-jupyter jupyterhub/jupyterhub --version 4.2.0 --values ./helm-config.yaml --set securityContext.runAsUser=1000
 
 echo ""
 echo "Done deploying JupyterHub!"

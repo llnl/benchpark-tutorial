@@ -65,6 +65,7 @@ singleuser:
   #   3) If custom Python packages are needed, it's often recommended to install a custom Jupyter kernel with `IPython kernel install`
   #   4) If you want a custom Jupyter launcher UI, install the appropriate packages and update JUPYTER_APP_LAUNCHER_PATH
   #   5) Copy any necessary local scripts or files and ensure proper permissions
+  uid: 1002
   image:
     name: ghcr.io/llnl/reproducible-benchmarking-spawn
     tag: "pact-2026"
