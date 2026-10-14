@@ -1,9 +1,9 @@
 {
     "tag": [
-        "ics-2026"
+        "pact-2026"
     ],
     "tutorial_dir": [
-        "2026-ICS"
+        "2026-PACT"
     ],
     "docker_os": [
         "linux"
