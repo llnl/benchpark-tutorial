@@ -6,4 +6,4 @@
 
 # NOTE: this script runs as root
 
-chown -R 1000 /home/fluxuser
+chown -R 1000 /home/jovyan

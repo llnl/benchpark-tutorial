@@ -7,9 +7,9 @@ FROM alpine/git
 
 USER root
 
-ENV NB_USER=fluxuser \
-    NB_UID=1002 \
-    HOME=/home/fluxuser
+ENV NB_USER=jovyan \
+    NB_UID=1000 \
+    HOME=/home/jovyan
 
 RUN adduser \
     -D \
