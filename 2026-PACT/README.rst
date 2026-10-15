@@ -1,8 +1,8 @@
 ==================
-ICS 2026 Tutorial
+PACT 2026 Tutorial
 ==================
 
-This directory contains the materials for the ICS 2026 tutorial. The following subsections go over the contains of the material.
+This directory contains the materials for the PACT 2026 tutorial. The following subsections go over the contains of the material.
 
 --------
 Contents
