@@ -1,6 +1,6 @@
-# Deploy hpcic-2026-dry-run to AWS Elastic Kubernetes Service (EKS)
+# Deploy pact-2026-dry-run to AWS Elastic Kubernetes Service (EKS)
 
-These config files and scripts can be used to deploy the hpcic-2026-dry-run tutorial to EKS.
+These config files and scripts can be used to deploy the pact-2026-dry-run tutorial to EKS.
 
 The sections below walk you through the steps to deploying your cluster. All commands in these
 sections should be run from the same directory as this README.
@@ -31,10 +31,6 @@ $ ./configure_kubernetes.sh
 
 With the cluster properly created and configured, we now can deploy JupyterHub to the cluster
 to manage everything else about our tutorial.
-
-Before deploying, build and push `ghcr.io/llnl/reproducible-benchmarking-spawn:pact-2026-dry-run`
-from `../../docker/Dockerfile`. The dry-run deployment intentionally uses this tag instead of the
-existing `hpcic-2026` container image.
 
 To deploy JupyterHub, run the following:
 
