@@ -12,7 +12,7 @@
 
 # NOTE: use this if we only want a single "node"
 if [[ $# -ne 1 ]]; then
-    /usr/bin/flux start /home/fluxuser/.local/bin/jupyterhub-singleuser
+    /usr/bin/flux start /opt/global_py_venv/bin/jupyterhub-singleuser
 else
     last_core_id=$(( $1 - 1 ))
     mkdir -p ${HOME}/.flux
@@ -25,5 +25,5 @@ hosts = "$(hostname)"
 cores = "0-${last_core_id}"
 EOF
     /usr/bin/flux start -c ${HOME}/.flux/resource.toml \
-        /home/fluxuser/.local/bin/jupyterhub-singleuser
+        /opt/global_py_venv/bin/jupyterhub-singleuser
 fi
