@@ -65,8 +65,8 @@ singleuser:
   image:
     name: ghcr.io/llnl/reproducible-benchmarking-spawn
     # Build and push this dry-run-specific tag from ../../docker/Dockerfile
-    # before deploying. This avoids launching the existing hpcic-2026 image.
-    tag: "pact-2026-dry-run"
+    # before deploying. This avoids launching the existing pact-2026 image.
+    tag: "pact-2026"
     pullPolicy: Always
   # Specify the minimum (i.e., guarantee) and maximum (i.e., limit) amount of resources per user
   cpu:
@@ -78,21 +78,12 @@ singleuser:
   # If needed, specify a custom entrypoint into the spawner image.
   # For more information, look at the documentation for Docker ENTRYPOINT and CMD directives:
   # https://www.docker.com/blog/docker-best-practices-choosing-between-run-cmd-and-entrypoint/
-  cmd:
-    - bash
-    - -lc
-    - |
-      last_core_id=$((32 - 1))
-      mkdir -p "${HOME}/.flux"
-      cat > "${HOME}/.flux/resource.toml" <<EOF
-      [resource]
-      noverify = true
-
-      [[resource.config]]
-      hosts = "$(hostname)"
-      cores = "0-${last_core_id}"
-      EOF
-      exec flux start -c "${HOME}/.flux/resource.toml" jupyterhub-singleuser
+  cmd: ["/entrypoint.sh", "32"]
+  initContainers:
+    - name: init-tutorial-service
+      image: ghcr.io/llnl/reproducible-benchmarking-init:pact-2026
+      command: ["/entrypoint.sh"]
+      imagePullPolicy: Always
   storage:
     type: none
     extraVolumes:
