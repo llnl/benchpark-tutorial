@@ -51,6 +51,6 @@ ENV SHELL=/usr/bin/bash
 ENV FLUX_URI_RESOLVE_LOCAL=t
 
 EXPOSE 8888
-ENTRYPOINT [ "tini", "--" ]
+ENTRYPOINT [ "/usr/bin/tini", "--" ]
 
 CMD ["flux", "start", "jupyter", "lab"]
