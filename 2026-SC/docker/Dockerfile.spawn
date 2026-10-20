@@ -14,9 +14,12 @@ RUN dnf install -y --setopt=install_weak_deps=False \
     ca-certificates \
     bind-utils \
     iputils \
-    tini && \
     dnf clean all && \
     rm -rf /var/cache/dnf
+
+ENV TINI_VERSION v0.19.0
+ADD --chmod=755 https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /usr/bin/tini
+RUN chmod +x /usr/bin/tini
 
 SHELL [ "/bin/bash", "-c" ]
 
