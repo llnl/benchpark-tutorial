@@ -13,7 +13,7 @@ USER root
 RUN dnf install -y --setopt=install_weak_deps=False \
     ca-certificates \
     bind-utils \
-    iputils \
+    iputils && \
     dnf clean all && \
     rm -rf /var/cache/dnf
 
