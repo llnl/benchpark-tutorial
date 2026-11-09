@@ -27,7 +27,7 @@ fi
 # if the JupyterHub deployment failed or was previously torn down
 set +e
 echo "Tearing down JupyterHub and uninstalling everything related to Helm:"
-helm uninstall pact-2026-tutorial-jupyter
+helm uninstall sc-2026-tutorial-jupyter
 set -e
 
 echo ""
